@@ -1,0 +1,12 @@
+Mappings can only be state variables, not memory.  This means we can't
+use a map to remember pushed rules.  Fortunately, we can know all rules
+in advance and use an in-memory struct to keep a stack for each of them
+(Tracery doesn't permit dynamic creation of rule names.)
+
+Strings don't have a way to append, or insert other than low-level memcpy's.
+Seem better to use a bytes array to build up a string, and only return a
+string at the last minute.  memcpy() from the solidity-stringutils package
+is written partially in assembly.
+
+
+
