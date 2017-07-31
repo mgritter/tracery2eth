@@ -22,8 +22,17 @@ of the contract, or access the existing one.  Example usage:
 
 ```javascript
 c = getContract( "0x024e724c30355326583ea41ef0e1ba6dd047e9aa" )
-// Unlock your account here
+
+// Local test of PCG (doesn't affect blockchain)
+// You'll get the same animal every time because the RNG is seeded
+// with block # and sender
+c.testAnimal()
+
+// Permanent creation of your very own, unique, PCG animal:
+eth.defaultAccount = eth.accounts[0]
+personal.unlockAccount( eth.defaultAccount, "yourpassword" )
 c.createAnimal( 1, {gas:150000} )
+// Wait for transaction to finish.
 c.getMyAnimal()
 ```
 
