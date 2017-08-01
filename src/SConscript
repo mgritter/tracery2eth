@@ -68,5 +68,13 @@ jsonWrapper = Builder( action = wrapJson,
 env.Append( BUILDERS={ 'EthContract' : solcBuilder } )
 env.Append( BUILDERS={ 'EthJs' : jsonWrapper } )
 
-env.EthContract( 'animal' )
+env.Depends( env.EthContract( 'animal' ),
+             [ "mortal.sol", "strbuf.sol" ] )
+
+env.Depends( env.EthContract( 'testchoice' ),
+             [ "mortal.sol", "strbuf.sol" ] )
+
 env.Default( env.EthJs( 'animal', CONTRACT="animal.sol:animal" ) )
+
+env.EthJs( 'testchoice', CONTRACT="testchoice.sol:test" )
+

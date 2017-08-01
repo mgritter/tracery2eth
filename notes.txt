@@ -3,10 +3,36 @@ use a map to remember pushed rules.  Fortunately, we can know all rules
 in advance and use an in-memory struct to keep a stack for each of them
 (Tracery doesn't permit dynamic creation of rule names.)
 
+-----
+
 Strings don't have a way to append, or insert other than low-level memcpy's.
 Seem better to use a bytes array to build up a string, and only return a
 string at the last minute.  memcpy() from the solidity-stringutils package
 is written partially in assembly.
+
+-----
+
+I tested three ways of picking strings, in testchoice.sol.  I then measured
+their code size (if compiled one by one in a sample transaction) and their
+gas usage in Remix online.
+
+1) Nested if with a literal in each clause.
+
+code size: 4460
+gas cost (excluding transaction): 22710, 22548, 22602
+
+2) Static array literal of strings
+
+code size: 4198
+gas cost: 24682, 24682, 24682
+
+3) Nested if referencing portions of a packed string
+
+code size: 3676
+
+gas cost: 22798, 22879, 22744
+
+The packed string seems a clear winner.
 
 
 
