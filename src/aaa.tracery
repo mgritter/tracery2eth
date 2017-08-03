@@ -1,0 +1,7 @@
+{
+  "origin" : ["[a:#some#]#a##a##a#"],
+  "some" : ["a", "a#some#"],
+  "define" : ["[x:][y:1][z:2]",
+  	      "[x:3][y:3#z#3][z:#x#]",
+	      "[z:POP]" ]
+}

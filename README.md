@@ -40,6 +40,8 @@ Note that the default amount of gas won't be enough; about 150k should do.  (Yes
 
 Or, you can just import the .sol file into your favorite environment.
 
+tracery2eth uses the 'ply' module, use "pip install ply" for now.
+
 ## Frequent Objections
 
 #### This isn't the sort of thing the blockchain is meant for!
