@@ -45,8 +45,9 @@ class RuleSet:
         # Map of top-level rule names to list of lists of AST options
         self.rules = {}
         
-        # Complete list of rules named anywhere in the grammar
-        self.allRules = set()
+        # Complete list of rules appearing in generators
+        # (only these needs a stack.)
+        self.generatedRules = set()
 
     def addOption( self, rule, ast ):
         if rule in self.rules:
@@ -54,9 +55,12 @@ class RuleSet:
         else:
             self.rules[rule] = [ast]
 
-    def visitRuleName( self, rule ):
-        self.allRules.add( rule )
-        
+    def visitDynamicRule( self, rule ):
+        self.generatedRules.add( rule )
+
+    def allRules( self ):
+        return self.generatedRules.union( set( self.rules.keys() ) )
+    
 class ParserError(Exception):
     pass
 
@@ -147,29 +151,32 @@ import pprint
 def visitRuleNames( rset, astList ):
     for a in astList:
         if a.isGenerator:
-            rset.visitRuleName( a.name )
+            rset.visitDynamicRule( a.name )
             if not a.pop:
                 visitRuleNames( rset, a.content )
     
-def parseGrammar( grammar ):
+def parseGrammar( grammar, verbose = False ):
     # The input grammar is a dictionary of rules.
     # Unfortunately this list may be incomplete because rules may create
     # other rules that were previously undefined.
     output = RuleSet()
 
     for ruleName in grammar.iterkeys():
-        output.visitRuleName( ruleName )
         for option in grammar[ruleName]:            
             ast = parser.parse( option, lexer=lexer )
             output.addOption( ruleName, ast )
             visitRuleNames( output, ast )
 
-    for ( ruleName, options ) in output.rules.iteritems():
-        print "rule:", ruleName
-        for o in options:
-            print "  option:", o
+    if verbose:
+        for ( ruleName, options ) in output.rules.iteritems():
+            print "rule:", ruleName
+            for o in options:
+                print "  option:", o
+                
+        print "generated rule names found: ",
+        rr = list( output.generatedRules )
+        rr.sort()
+        print " ".join( rr )
 
-    print "all rule names found: ",
-    print " ".join( list( output.allRules ) )
-            
+    return output
     

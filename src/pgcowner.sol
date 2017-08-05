@@ -24,7 +24,7 @@ contract pgc_owner is mortal {
     event IterationsExpired( address creator );
 
     /// Abstract method to create content
-    function _createContent( poorRNG.random rng ) internal results (string);
+    function _createContent( poorRNG.random rng ) internal returns (string);
 
     /// Create a string using a procedural mechanism implemented
     /// by _createContent.  This string is saved with the sender

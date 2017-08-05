@@ -18,7 +18,20 @@ library strbuf {
 	return strbuf( { _buf: new bytes( sizeEstimate ),
 			 _len: 0 } );
     }
-    
+
+    function replaceWithNew( strbuf self,
+			     uint sizeEstimate ) internal returns ( strbuf ret ) {
+	ret = strbuf( { _buf: self._buf,
+	                _len: self._len } );
+         self._buf = new bytes( sizeEstimate );
+        self._len = 0;
+    }
+
+    function replaceWithOld( strbuf self, strbuf old ) internal {
+	self._buf = old._buf;
+	self._len = old._len;
+    }
+
     /* This version copies only 32-byte words and assumes it can stomp
        on the last 32-byte word.  But they need not be aligned!
        This means you should allocate an extra word at the end, if

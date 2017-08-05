@@ -34,5 +34,10 @@ gas cost: 22798, 22879, 22744
 
 The packed string seems a clear winner.
 
+-----
+
+animals.sol compiled with per-function packing: 12352 bytes
+animals.sol compiles with global packing: 12264
+
 
 
