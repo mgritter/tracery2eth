@@ -39,5 +39,16 @@ The packed string seems a clear winner.
 animals.sol compiled with per-function packing: 12352 bytes
 animals.sol compiles with global packing: 12264
 
+-----
 
+TODOs:
+
+* Come up with a clever string-packing algorithm to save a little more space
+   * "Longest common supersequence"?
+* Look for ways to make the contract more efficient.
+   * Idea: eliminate the loop when copying a literal less than 32 bytes long?
+* Allow deletion of content.
+   * I was thinking of making this a paid operation.
+* Would running a tracery virtual machine inside Solidity be more
+space-efficient?  Perhaps at higher gas cost.
 
