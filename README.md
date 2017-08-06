@@ -194,6 +194,27 @@ Default( env.TraceryContract( 'myFile.tracery',
 After running scons, the resulting .js and .json files will be in
 the build directory.
 
+### Limitations
+
+Ethereum doesn't support contracts larger than 24000 bytes.  See
+https://github.com/ethereum/EIPs/issues/170  It is easy to create a tracery
+file that is too large to be compiled into a working contract, and no
+warning is given.
+
+Tracery modifiers are not currently supported.
+
+Compilation does not fail on syntax errors.
+
+I'm unsure whether it's possible, in Tracery, to use # or [ or ] in a literal.
+My current parser does not support this.
+
+## Example credits
+
+src/animals.tracery and src/pets.tracery are taken from Kate Compton's tracery
+tutorial and github page.
+
+src/bot_teleport.tracery is a slightly edited version of http://cheapbotsdonequick.com/source/bot_teleport
+
 ## Frequent Objections
 
 #### This isn't the sort of thing the blockchain is meant for!

@@ -5,3 +5,6 @@ Import( 'env' )
 Default( env.TraceryContract( 'animal.tracery',
                               contract = 'animal' ) )
 
+env.TraceryContract( 'pet.tracery', contract = 'pet' )
+env.TraceryContract( 'bot_teleport.tracery', contract = 'teleport' )
+

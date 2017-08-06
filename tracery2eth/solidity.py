@@ -12,6 +12,10 @@ class PackedLiterals:
 
     def literalIndex( self, text ):
         return self.packed.find( text )
+
+# FIXME: do a real version
+def escapeLiteral( x ):
+    return x.replace( "\n", "\\n" )
         
 class ContractWriter:
     def __init__( self,
@@ -121,9 +125,10 @@ if ( self.{stack}.nonempty() ) {{
     def astToCode( self, a, dynRulesMap, packed ):
         if a.isLiteral:
             self.write( 12,
-                        'self._buf.appendPacked( self._literals, {}, {} );'
+                        'self._buf.appendPacked( self._literals, {}, {} ); // "{}" '
                         .format( packed.literalIndex( a.value ),
-                                 len( a.value ) ) )
+                                 len( a.value ),
+                                 escapeLiteral( a.value ) ) )
         elif a.isGenerator:
             if a.pop:
                 self.write( 12,
@@ -251,7 +256,7 @@ function _createContent( poorRNG.random rng ) internal returns (string) {{
 }}
 """.format( fn=self.rule2Function( origin ),
             stacks = "".join( stacks ),
-            literals = self.packed.packed ) )
+            literals = escapeLiteral( self.packed.packed ) ) )
 
     def contractEnd( self ):
         self.write( 0, "}" )

@@ -43,6 +43,9 @@ animals.sol compiles with global packing: 12264
 
 TODOs:
 
+* Unicode characters aren't handled correctly, figure out where I need to
+do .encode( "utf-8" ) before output
+* Warn about contract length if too long
 * Come up with a clever string-packing algorithm to save a little more space
    * "Longest common supersequence"?
 * Look for ways to make the contract more efficient.

@@ -104,7 +104,12 @@ def p_rule( p ):
     p[0] = [ p[1] ] + p[2]
 
 def p_literal( p ):
-    '''literal : LITERAL'''
+    '''literal : LITERAL
+               | PERIOD
+               | COLON'''
+    # Literals and periods can appear in text.
+    # FIXME: rewrite this so they appear as a single element in the AST,
+    # or merge later.
     p[0] = Literal( text = p[1] )
 
 def p_apply_unmodified( p ):
