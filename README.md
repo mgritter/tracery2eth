@@ -3,44 +3,196 @@
 This is a project to create a Tracery-to-Solidity compiler so that procedurally
 generated content can be created on the Ethereum blockchain.
 
-Current status: a hand-crafted example is working, translated from a Tracery
-tutorial example.  It is running on the Rinkeby test chain, at address
-0x024e724c30355326583ea41ef0e1ba6dd047e9aa
+Tracery can be found at http://tracery.io, or https://github.com/galaxykate/tracery.  Twitter bots based on tracery can be found at http://cheapbotsdonequick.com/
 
-## Compilation and Running
+### Project status ###
 
-You should have geth and solc installed.  The include SCons file will
-call solc and generate a Javascript file in the build directory suitable
-for import into geth:
+Automatic compilation is working, at least for a few Tracery
+tutorial examples.
+
+A live contract on the Rinkeby test chain can be found at
+0xfe054487316ad98abefa3d3ee7852534c5bf413a.
+
+## Using a PCG contract
+
+All of the compiled Tracery generators share a parent contract, pcg_owner.
+Its ABI (in string form) is:
+
+```"[{\"constant\":false,\"inputs\":[],\"name\":\"kill\",\"outputs\":[],\"payable\":false,\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getMyContent\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"maxIter\",\"type\":\"uint256\"}],\"name\":\"createContent\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"name\",\"type\":\"string\"},{\"indexed\":false,\"name\":\"creator\",\"type\":\"address\"}],\"name\":\"ContentCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"creator\",\"type\":\"address\"}],\"name\":\"ContentAlreadyCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"creator\",\"type\":\"address\"}],\"name\":\"IterationsExpired\",\"type\":\"event\"}]"```
+
+Or, in JSON form:
+
+```javascript
+[{
+    constant: false,
+    inputs: [],
+    name: "kill",
+    outputs: [],
+    payable: false,
+    type: "function"
+}, {
+    constant: true,
+    inputs: [],
+    name: "getMyContent",
+    outputs: [{
+        name: "",
+        type: "string"
+    }],
+    payable: false,
+    type: "function"
+}, {
+    constant: false,
+    inputs: [{
+        name: "maxIter",
+        type: "uint256"
+    }],
+    name: "createContent",
+    outputs: [{
+        name: "",
+        type: "bool"
+    }],
+    payable: false,
+    type: "function"
+}, {
+    anonymous: false,
+    inputs: [{
+        indexed: false,
+        name: "name",
+        type: "string"
+    }, {
+        indexed: false,
+        name: "creator",
+        type: "address"
+    }],
+    name: "ContentCreated",
+    type: "event"
+}, {
+    anonymous: false,
+    inputs: [{
+        indexed: false,
+        name: "creator",
+        type: "address"
+    }],
+    name: "ContentAlreadyCreated",
+    type: "event"
+}, {
+    anonymous: false,
+    inputs: [{
+        indexed: false,
+        name: "creator",
+        type: "address"
+    }],
+    name: "IterationsExpired",
+    type: "event"
+}]
+```
+
+In the Geth shell, you can use the following code to access the smart
+contract and generate your very own, unique, procedurally generated content:
+
+```javascript
+// Instantiate the contract ABI.
+var cAbi = JSON.parse( "contract string here" );
+var contract = eth.contract( cAbi ).at( "address string here" )
+
+// Specify an account to pay for string creation
+eth.defaultAccount = eth.accounts[0]
+personal.unlockAccount( eth.defaultAccount, "yourpassword" )
+
+// Create the string, which is stored on the blockchain.
+// Returns a transaction ID, wait for it to complete.
+contract.createContent( 1, {gas:200000} )
+
+// Retrieve the string corresponding to the sending account (a constant
+// operation, no transaction created.
+contract.getMyContent()
+```
+
+Your string is guaranteed to be unique (up to hash collisions) within this
+particular contract.  You can only create the string once; there is no
+way to clear it.  Perhaps this will be a paid option later.  :)
+
+Note that this is a very expensive operation in gas.  The default gas will
+not be enough for the transaction to succeed.  The 'animal' contract typically
+uses around 115000 gas.
+
+Example output from the 'animal' tracery generator:
+```
+"The purple zebra of the forest is called Darcy"
+```
+
+## Creating a PCG contract.
+
+### Dependencies
+
+geth: Ethereum node and Javascript shell
+
+solc: Solidity compiler
+  
+scons: Build tool (apt-get install scons)
+  * apt-get install scons
+
+python
+
+'ply' module: pure Python parser module
+   * Use "pip install ply" for now
+
+### Build process
+
+Running 'scons' will build the default target, currently 'animal.tracery'.
+All output will go into the 'build' directlry.
+
+A javascript file will be created that has the compiled contract in JSON
+form, and some utility functions for adding it or using it.
+
+From the geth console:
 
 ```javascript
 loadScript( "build/animal.js" )
 ```
-
 You can then use the helper functions to either create your own version
 of the contract, or access the existing one.  Example usage:
 
 ```javascript
-c = getContract( "0x024e724c30355326583ea41ef0e1ba6dd047e9aa" )
+// Use the ABI to access an existing contract
+c = getContract( "0xfe054487316ad98abefa3d3ee7852534c5bf413a" )
 
-// Local test of PCG (doesn't affect blockchain)
-// You'll get the same animal every time because the RNG is seeded
-// with block # and sender
-c.testAnimal()
+// Create a new contract
+// Must have set eth.defaultAccount first and unlocked the account
+// (This is super-expensive.)
+c = createContract()
 
-// Permanent creation of your very own, unique, PCG animal:
-eth.defaultAccount = eth.accounts[0]
-personal.unlockAccount( eth.defaultAccount, "yourpassword" )
-c.createAnimal( 1, {gas:150000} )
-// Wait for transaction to finish.
-c.getMyAnimal()
+// Show events from contract:
+showEvents( c )
 ```
 
-Note that the default amount of gas won't be enough; about 150k should do.  (Yes, it's very expensive, about $0.12 in real money.)
+### Building your own tracery file with the complier
 
-Or, you can just import the .sol file into your favorite environment.
+If you just want to try out the compiler, it can be run from the base
+directory as:
 
-tracery2eth uses the 'ply' module, use "pip install ply" for now.
+```
+python -m tracery2eth.main <tracery input> <solidity output>
+```
+
+The ```--contract <contract name>``` option lets you specify a contract name,
+and the ```--rule <origin rule>``` lets you pick which rule from the Tracery
+definition to expand.  ```--verbose``` prints out status of parsing and
+generating the Solidity code.
+
+### Building your own tracery file with the build system.
+
+Put your tracery file in src.
+
+Edit ```src/Sonscript``` to change or add your file:
+
+```python
+Default( env.TraceryContract( 'myFile.tracery',
+                              contract = 'myContract' ) )
+```
+
+After running scons, the resulting .js and .json files will be in
+the build directory.
 
 ## Frequent Objections
 

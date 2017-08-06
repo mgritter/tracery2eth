@@ -1,3 +1,2 @@
-rinkeby / animal: 0x024e724c30355326583ea41ef0e1ba6dd047e9aa
-
+rinkeby / animal: 0xfe054487316ad98abefa3d3ee7852534c5bf413a
 

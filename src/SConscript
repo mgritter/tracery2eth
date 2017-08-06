@@ -1,8 +1,7 @@
 # -*- Mode: python -*-
 
 Import( 'env' )
-#env.EthContract( 'animal' )
 
-env.EthContract( 'testchoice.sol', 'test' )
-Default( env.EthContract( 'animal.sol', 'animal' ) )
+Default( env.TraceryContract( 'animal.tracery',
+                              contract = 'animal' ) )
 

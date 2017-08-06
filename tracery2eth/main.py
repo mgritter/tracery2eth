@@ -35,11 +35,11 @@ def main():
     parser.add_argument( '-c', '--contract',
                          action = "store",
                          default = "tracery",
-                         help = 'Contract name to use.' )
+                         help = 'Contract name to use (default:tracery)' )
     parser.add_argument( '-r', '--rule',
                          action = "store",
                          default = "origin",
-                         help = 'Starting tracery rule to expand.' )
+                         help = 'Starting tracery rule to expand (default:origin)' )
     args = parser.parse_args()
     compile( traceryFile = args.tracery,
              solidityFile = args.solidity,
