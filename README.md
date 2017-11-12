@@ -11,7 +11,7 @@ Automatic compilation is working, at least for a few Tracery
 tutorial examples.
 
 A live contract on the Rinkeby test chain can be found at
-0xfe054487316ad98abefa3d3ee7852534c5bf413a.
+0xfe054487316ad98abefa3d3ee7852534c5bf413a.  https://rinkeby.etherscan.io/address/0xfe054487316ad98abefa3d3ee7852534c5bf413a
 
 ## Using a PCG contract
 
